@@ -6,6 +6,7 @@ Author: Anthony Cole
 Version: 0.5a
 */
 
+
 class Alphabet_Soup
 {	
 	private static $reg = array();
@@ -13,11 +14,16 @@ class Alphabet_Soup
 
 	public static function init()
 	{
-		self::$supported_pts = array('post', 'page');
+		$default_pts = array('songwriter', 'discography');
+
+		$supported_pts = apply_filters('abs_post_types', $default_pts);
+		
+		self::$supported_pts = $supported_pts;
+
 		add_action('save_post', array(self::instance(), 'save_post'));
 		add_action('update_post', array(self::instance(), 'save_post'));
-		add_action('init', array(self::instance(), '_register'));
 
+		add_action('init', array(self::instance(), '_register'));
 		add_action('admin_menu', array(self::instance(), '_register_menu'));
 
 		register_activation_hook( __FILE__, array(self::instance(), '_register') );
@@ -101,6 +107,22 @@ class Alphabet_Soup
 		add_management_page('Alphabet Soup Options', 'Alphabet Soup', 'manage_options', 'ab-options', array(self::instance(), '_management_page'));
 	}
 
+	public static function _batch_update($pt)
+	{
+		$args = array(
+			'post_type' 	 => $pt,
+			'posts_per_page' => -1,
+		);
+
+		$posts = get_posts($args);
+
+		foreach($posts as $post)
+		{
+			self::_set_term($post->ID, $post->post_title);
+			echo '<p>' . $post->post_title . ' Is now alphabetised</p>';
+		}
+	}
+
 	public static function _management_page()
 	{
 
@@ -108,11 +130,15 @@ class Alphabet_Soup
 		<div class="wrap">
 			<h2>Alphabet Soup</h2>
 			<?php  
-			if( $_GET['update_pts'] && wp_verify_nonce($_GET['_wpnonce'], 'ab-check') ) : 
-				// put a batch update method here
+			if( $_GET['update_pts'] && wp_verify_nonce($_GET['_wpnonce'], 'ab-check') && isset($_GET['pt']) && post_type_exists($_GET['pt']) ) : 
+				self::_batch_update($_GET['pt']);
 			else : 
 				?>
-				<p><a class="button" href="<?php echo wp_nonce_url(admin_url('tools.php?page=ab-options&update_pts=yes'), 'ab-check'); ?>">Add old posts to the index</a></p>
+				<h3>Batch Update</h3>
+				<?php foreach(self::$supported_pts as $pt ) :  ?>
+					<?php $post_type = get_post_type_object($pt); ?>
+					<p><a class="button" href="<?php echo wp_nonce_url(admin_url('tools.php?page=ab-options&update_pts=yes&pt=' . $pt), 'ab-check'); ?>">Add <?php echo $post_type->labels->name; ?> to the index</a></p>
+				<?php endforeach; ?>
 				<?php
 			endif;
 			?>
@@ -124,3 +150,4 @@ class Alphabet_Soup
 Alphabet_Soup::init();
 
 ?>
+
