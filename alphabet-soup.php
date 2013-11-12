@@ -17,7 +17,10 @@ class Alphabet_Soup
 		add_action('save_post', array(self::instance(), 'save_post'));
 		add_action('update_post', array(self::instance(), 'save_post'));
 		add_action('init', array(self::instance(), '_register'));
-		register_activation_hook( __FILE__, array(self::instance(), '_activate') );
+
+		add_action('admin_menu', array(self::instance(), '_register_menu'));
+
+		register_activation_hook( __FILE__, array(self::instance(), '_register') );
 	}
 
 
@@ -90,6 +93,30 @@ class Alphabet_Soup
 		} else {
 			return $newtitle;
 		}
+	}
+
+	public static function _register_menu()
+	{
+		add_management_page('Alphabet Soup Options', 'Alphabet Soup', 'manage_options', 'ab-options', array(self::instance(), 'management_page'));
+	}
+
+	public static function management_page()
+	{
+
+		?>
+		<div class="wrap">
+			<h2>Alphabet Soup</h2>
+			<?php  
+			if( $_GET['update_pts'] && wp_verify_nonce($_GET['_wpnonce'], 'ab-check') ) : 
+				// put a batch update method here
+			else : 
+				?>
+				<p><a class="button" href="<?php echo wp_nonce_url(admin_url('tools.php?page=ab-options&update_pts=yes'), 'ab-check'); ?>">Add old posts to the index</a></p>
+				<?php
+			endif;
+			?>
+		</div>
+		<?php
 	}
 }
 
