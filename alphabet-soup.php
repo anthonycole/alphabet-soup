@@ -73,7 +73,19 @@ class Alphabet_Soup
 		if ( wp_is_post_revision( $post_id ) )
 			return;
 
-		$term = self::sanitize_title($_POST['post_title']);
+		self::_set_term($post_id, $_POST['post_title']);
+
+	}
+
+	public static function _set_term($post_id, $post_title) {
+
+		$new_title = strtoupper(substr($post_title, 0, 1));
+		
+		if( is_numeric( $newtitle ) ) {
+			$term = 'numeric';
+		} else {
+			$term = $new_title;
+		}
 
 		$term_id = term_exists( $term, 'alphabet-soup' );
 
@@ -81,19 +93,8 @@ class Alphabet_Soup
 		wp_delete_object_term_relationships( $post_id, 'alphabet-soup' ); 
 
 		wp_set_post_terms( $post_id, $term_id, 'alphabet-soup');
-
 	}
 
-	public static function sanitize_title($post_title)
-	{
-		$newtitle = strtoupper(substr($post_title, 0, 1));
-		
-		if( is_numeric( $newtitle ) ) {
-			return 'numeric';
-		} else {
-			return $newtitle;
-		}
-	}
 
 	public static function _register_menu()
 	{
