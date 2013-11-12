@@ -97,10 +97,10 @@ class Alphabet_Soup
 
 	public static function _register_menu()
 	{
-		add_management_page('Alphabet Soup Options', 'Alphabet Soup', 'manage_options', 'ab-options', array(self::instance(), 'management_page'));
+		add_management_page('Alphabet Soup Options', 'Alphabet Soup', 'manage_options', 'ab-options', array(self::instance(), '_management_page'));
 	}
 
-	public static function management_page()
+	public static function _management_page()
 	{
 
 		?>
