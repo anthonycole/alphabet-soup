@@ -1,6 +1,9 @@
 <?php  
 /*
 Plugin Name: Alphabet Soup
+Description: Alphabet Soup allows you to automatically sort your posts alphanumerically on your sites frontend.
+Author: Anthony Cole
+Version: 0.5a
 */
 
 class Alphabet_Soup
@@ -13,7 +16,6 @@ class Alphabet_Soup
 		self::$supported_pts = array('post', 'page');
 		add_action('save_post', array(self::instance(), 'save_post'));
 		add_action('update_post', array(self::instance(), 'save_post'));
-
 		add_action('init', array(self::instance(), '_register'));
 		register_activation_hook( __FILE__, array(self::instance(), '_activate') );
 	}
