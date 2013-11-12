@@ -148,6 +148,3 @@ class Alphabet_Soup
 }
 
 Alphabet_Soup::init();
-
-?>
-
