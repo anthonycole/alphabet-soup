@@ -24,6 +24,7 @@ class Alphabet_Soup
 		add_action('update_post', array(self::instance(), 'save_post'));
 
 		add_action('init', array(self::instance(), '_register'));
+
 		add_action('admin_menu', array(self::instance(), '_register_menu'));
 
 		register_activation_hook( __FILE__, array(self::instance(), '_register') );
@@ -39,7 +40,8 @@ class Alphabet_Soup
 				'label' => __( 'Alphabet Soup' ),
 				'rewrite' => false,
 				'hierarchical' => true,
-				'query_var'	   => 'abs_letter'
+				'query_var'	   => 'abs_letter',
+				'show_ui'	   => false
 			)
 		);
 	}
@@ -119,7 +121,7 @@ class Alphabet_Soup
 		foreach($posts as $post)
 		{
 			self::_set_term($post->ID, $post->post_title);
-			echo '<p>' . $post->post_title . ' Is now alphabetised</p>';
+			echo '<p>' . $post->post_title . ' is now alphabetised.</p>';
 		}
 	}
 
